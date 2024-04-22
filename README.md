@@ -4,6 +4,8 @@
 
 ### Section 1 - Intro
 
+#### Bottom Line Up Front (BLUF) The authors take a multidimensional set of time domain data, use wavelet analysis tools to construct that data into a form that can be optimized for various parameters (event signature, event strength), and then use various ML algorithms to achieve that optimization. 
+
 Assumptions:
 
 System suitable for analysis have the following characteristics:
@@ -80,53 +82,51 @@ This is low-key hard to follow, but the bottom line is that a variety of ML opti
 
 Lots of details about simulations and demonstrations of the procedure. Pretty neat visual representations of various event signatures (output of the above Aglos). Cool stuff.
 
-# Real-Time Monitoring of High-DimensionalFunctional Data Streams via Spatio-TemporalSmooth Sparse Decomposition
+# Deep Learning Based Automatic Modulation Classification with Blind OFDM Parameter Estimation
 
-## AKA Processing real-time data to identify anomalies / events
+## Section 1: Intro
+In an attempt to further dynamic spectrum access (DSA) technology, the authors propose a signal classifier and parameter estimator that can be used to aid in spectrum allocation. Dynamic channels make it difficult to classify signals within a wide spectrum, and in this case conventional classification methods (cyclostationarity) will fail.
 
-### Section 1 Intro
+For comms signals, one can use raw IQ data without "hand crafted features" in DL based AMC schemes. OFDM presents a problem for this approach due to its multi-carrier nature, and the fact that it overlaps in frequency. 
 
-There is lots of data of high:
-(1) Variety
-(2) Dimensionality
-(3) Velocity
-(4) Spatio-temportally structured -- i.e. spatial and temporal correlation of signals across sensors
+The authors propse a CNN-AMC that uses an FFT bank to identify signals in the frequency domain as opposed to time-domain IQ. This is an example of using signal analysis tools to extract features from a dataset. 
 
-Examples of data meeting these properties are given, there are many. This paper considers sensors/datas that can be visualized as an image. I.e. IR image sensors.
+## Section 2: Related Work
 
-### Section 2 Lit Review
+Offers a very robust survey of OFDM parameter estimation related papers. Typical approaches include the obvious: autocorrellation based synchronization, 2nd cyclostationary hypothesis testing. 
 
-Other papers have proposed more traditional methods of detecting events, such as:
+The authors then review other ML focused papers. There are so many, and they all take wildly different approaches that range from (1) using raw IQ, (2) applying various transforms to the data (3) visualizing the data as an image and running it through an image classifier (4) untold variations of every ML algorithm you can imagine. 
 
-(1) CUSUM energy detection and thresholding, adaptively. Treats datastreams as independent and so doesn't leverage spatio-temporal correlation between signals.
-(2) PCA has been used to address high dimensionality constraints. 
-(3) Tensor-based PCA that can model the spatial and spectral structures of data-stream images
+## Section 3: System Model
 
-Note: PCA cannot be used for non-stationary signals (statistics vary with time)
+Typical OFDM system model. Highlights:
+(1) OFDM symbols are transmittied in the frequency domain, neccesitating an FFT bank
+(2) The mod-scheme of the underlying comms waveform is unknown.
+(3) SISO and MIMO systems are considered
+(4) Standard multipath fading channel model.
 
-In total, none of these methods are fully equipped to deal with the issues presented in section 1.
+## Section 4: Signal Classification Models
+The classification model utilizes the second-order cyclostationarity tests to estimate the OFDM symbol length (CAF function). 
 
+The model they developed uses a CNN (study this model) with IQ samples and "Long-Short-Term-Memory". The authors go on to describe how they normalized their data, as well as other layers of the model. They used words that probably mean something: SoftMax, LSTM, AP. This model estimates the OFDM symbol lengths.
 
-### Section 3 Spatio-Temporal Smooth Sparse Decomposition
+A second model, an FFT-Bank based CNN is used to classify the single carrier modulations that the OFDM signal is leveraging. 
 
-#### AKA, the interesting signal-processing-esque signal decomposition method that conditions the data streams for ML methods on convex data
+There is a nice table showing the size of each layer of the network: RelUs, Max Pools, Softmax, etc. 
 
-The 1D data streams, y, for p sensors are organized into matrix Y = [p x n]
-y is decomposed into 3 components, mu, alpha, and e, all vectors, where y = mu + alpha + e (functional mean, anomalies, noise)
-The assumption here is the a, anomalies, are sparse in the data set. 
-The mean and anomalies are further deconstructed into their component spatio and temporal bases: B_t and B_s, e.g. mu = (B_mu_t x B_mu_s)theta, where theta is the spatio-temporal coefficient of mu. x here is the tensor product. 
-Theta is the parameter of merit that ST-SSD minimizes over. 
+This proposed model allegedly achieves good performance for discriminating OFDM symbol lengths and classifying the underlying modulation. The time/freq domain analysis occurs simultaneously such that the estimation/classification problems are solved in tandem using the same principles as the WDMF (review citation).
 
-The ST-SSD model is proposed using the above parameters. It is complicated so I will not transcribe, but it is a minimization problem of theta_mu and theta_a. 
-The authors describe the problem space a bit more, and then present the algorithms used to achieve the minimization.They propose using a descent method called Accelerated Proximal Gradient Descent. The authors assert it always converges as proved in a prior publication.
+## Section 5: Dataset Generation
 
-### Section 4 ST-SSD For Streaming Data And Recursive Estimation
+They used an existing dataset and trained their network with it. Various mod-schemes are discussed. Typical QAM/QPSK. 
 
-In section for, they note that the algorithm proposed above is not suited for streaming data, but rather for a fixed dataset y (defined above). They do the work to extend the methods to streaming data, but I am considering that extraneous detail here.
+## Section 6: Results
+The authors use stochastic gradient descent with momentum to optimize the results of their neural network, outlining the parameters with which they initialized their model. They discuss other parameterizations (FFT window length, Number of FFT bins, etc) and present results for various combinations of parameters. Eventually, they settle on what they consider the optimal configuration. 
 
-### Sections 5,6,7
+Results are dicussed for different channel models.
+Constraints are discussed as well, one major one being that the signal lengths have to be long compared to other methods mentioned previously. This is due the requirement of a minimum spectral resolution for good classiciation. 
 
-These sections correspond to a simulation study, a case study, and the extension of the model to an "Online" version (discussed in class). Not in scope, imo. 
+Results are honestly not that great, but show promise. 
 
 
 

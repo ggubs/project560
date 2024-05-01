@@ -128,8 +128,53 @@ Constraints are discussed as well, one major one being that the signal lengths h
 
 Results are honestly not that great, but show promise. 
 
+# Real-Time Monitoring of High-DimensionalFunctional Data Streams via Spatio-TemporalSmooth Sparse Decomposition
+
+## AKA Processing real-time data to identify anomalies / events
+
+### Section 1 Intro
+
+There is lots of data of high:
+(1) Variety
+(2) Dimensionality
+(3) Velocity
+(4) Spatio-temportally structured -- i.e. spatial and temporal correlation of signals across sensors
+
+Examples of data meeting these properties are given, there are many. This paper considers sensors/datas that can be visualized as an image. I.e. IR image sensors.
+
+### Section 2 Lit Review
+
+Other papers have proposed more traditional methods of detecting events, such as:
+
+(1) CUSUM energy detection and thresholding, adaptively. Treats datastreams as independent and so doesn't leverage spatio-temporal correlation between signals.
+(2) PCA has been used to address high dimensionality constraints. 
+(3) Tensor-based PCA that can model the spatial and spectral structures of data-stream images
+
+Note: PCA cannot be used for non-stationary signals (statistics vary with time)
+
+In total, none of these methods are fully equipped to deal with the issues presented in section 1.
 
 
+### Section 3 Spatio-Temporal Smooth Sparse Decomposition
+
+#### AKA, the interesting signal-processing-esque signal decomposition method that conditions the data streams for ML methods on convex data
+
+The 1D data streams, y, for p sensors are organized into matrix Y = [p x n]
+y is decomposed into 3 components, mu, alpha, and e, all vectors, where y = mu + alpha + e (functional mean, anomalies, noise)
+The assumption here is the a, anomalies, are sparse in the data set. 
+The mean and anomalies are further deconstructed into their component spatio and temporal bases: B_t and B_s, e.g. mu = (B_mu_t x B_mu_s)theta, where theta is the spatio-temporal coefficient of mu. x here is the tensor product. 
+Theta is the parameter of merit that ST-SSD minimizes over. 
+
+The ST-SSD model is proposed using the above parameters. It is complicated so I will not transcribe, but it is a minimization problem of theta_mu and theta_a. 
+The authors describe the problem space a bit more, and then present the algorithms used to achieve the minimization.They propose using a descent method called Accelerated Proximal Gradient Descent. The authors assert it always converges as proved in a prior publication.
+
+### Section 4 ST-SSD For Streaming Data And Recursive Estimation
+
+In section for, they note that the algorithm proposed above is not suited for streaming data, but rather for a fixed dataset y (defined above). They do the work to extend the methods to streaming data, but I am considering that extraneous detail here.
+
+### Sections 5,6,7
+
+These sections correspond to a simulation study, a case study, and the extension of the model to an "Online" version (discussed in class). Not in scope, imo. 
 
 
 
